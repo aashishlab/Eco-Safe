@@ -1,0 +1,11 @@
+/* App-specific styles - Tailwind CSS handles most styling */
+
+/* Smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Ensure full height for root element */
+#root {
+  min-height: 100vh;
+}

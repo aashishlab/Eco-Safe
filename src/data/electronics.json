@@ -1,0 +1,488 @@
+[
+  {
+    "id": 1,
+    "name": "CRT Monitor",
+    "category": "Display Devices",
+    "image": "🖥️",
+    "description": "Cathode Ray Tube monitors contain high levels of lead in the glass funnel and neck.",
+    "toxins": [
+      {
+        "name": "Lead",
+        "amount": "1.5 - 3.5 kg per unit",
+        "effect": "Causes permanent brain damage and developmental delays in children. Damages nervous system and kidneys.",
+        "severity": "critical"
+      },
+      {
+        "name": "Cadmium",
+        "amount": "Present in phosphor coating",
+        "effect": "Highly toxic to kidneys and bones. Classified as a human carcinogen.",
+        "severity": "critical"
+      },
+      {
+        "name": "Barium",
+        "amount": "Present in glass components",
+        "effect": "Causes muscle weakness, heart irregularities, and respiratory failure.",
+        "severity": "high"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Lithium-Ion Battery",
+    "category": "Batteries",
+    "image": "🔋",
+    "description": "Found in laptops, phones, and power tools. Can cause fires when damaged.",
+    "toxins": [
+      {
+        "name": "Cobalt",
+        "amount": "5-20% of battery weight",
+        "effect": "Causes severe lung diseases, asthma, and allergic reactions. Toxic to thyroid function.",
+        "severity": "critical"
+      },
+      {
+        "name": "Nickel",
+        "amount": "Present in electrodes",
+        "effect": "Causes skin allergies, respiratory issues, and lung fibrosis. Carcinogenic.",
+        "severity": "high"
+      },
+      {
+        "name": "Lithium",
+        "amount": "Primary component",
+        "effect": "Causes burns on skin contact. Inhalation causes pulmonary edema.",
+        "severity": "medium"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Mobile Phone",
+    "category": "Communication Devices",
+    "image": "📱",
+    "description": "Contains circuit boards with multiple heavy metals and rare earth elements.",
+    "toxins": [
+      {
+        "name": "Lead",
+        "amount": "In soldering materials",
+        "effect": "Neurotoxin that impairs cognitive development in children. Causes anemia and kidney damage.",
+        "severity": "critical"
+      },
+      {
+        "name": "Mercury",
+        "amount": "In switches and LCD screens",
+        "effect": "Damages brain, kidneys, and developing fetuses. Causes Minamata disease.",
+        "severity": "critical"
+      },
+      {
+        "name": "Arsenic",
+        "amount": "In semiconductors",
+        "effect": "Causes skin lesions, cancer, and cardiovascular disease. Highly poisonous.",
+        "severity": "critical"
+      },
+      {
+        "name": "Beryllium",
+        "amount": "In connectors and springs",
+        "effect": "Causes chronic beryllium disease (lung scarring). Carcinogenic.",
+        "severity": "high"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Laptop Computer",
+    "category": "Computing Devices",
+    "image": "💻",
+    "description": "Contains mercury in LCD screens, lead in soldering, and multiple heavy metals.",
+    "toxins": [
+      {
+        "name": "Mercury",
+        "amount": "3-5 mg in CCFL backlights",
+        "effect": "Neurotoxin that causes tremors, memory loss, and personality changes.",
+        "severity": "critical"
+      },
+      {
+        "name": "Lead",
+        "amount": "Up to 1 kg in older models",
+        "effect": "Accumulates in bones and teeth. Causes reproductive issues and hypertension.",
+        "severity": "critical"
+      },
+      {
+        "name": "PVC Plastic",
+        "amount": "In cables and casing",
+        "effect": "Releases dioxins when burned. Causes cancer and endocrine disruption.",
+        "severity": "high"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "CRT Television",
+    "category": "Display Devices",
+    "image": "📺",
+    "description": "Older TVs contain significantly more lead than modern displays.",
+    "toxins": [
+      {
+        "name": "Lead",
+        "amount": "2 - 4 kg per unit",
+        "effect": "Impairs brain development in children. Causes learning disabilities and behavioral problems.",
+        "severity": "critical"
+      },
+      {
+        "name": "Cadmium",
+        "amount": "In picture tube",
+        "effect": "Extremely toxic. Causes itai-itai disease (severe bone pain and kidney failure).",
+        "severity": "critical"
+      },
+      {
+        "name": "Europium & Yttrium",
+        "amount": "In phosphor coating",
+        "effect": "Rare earth elements toxic to lungs and liver when inhaled as dust.",
+        "severity": "medium"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Printed Circuit Board",
+    "category": "Components",
+    "image": "🔌",
+    "description": "The green boards found in all electronics. Highly concentrated with toxic metals.",
+    "toxins": [
+      {
+        "name": "Lead",
+        "amount": "In solder joints",
+        "effect": "Blocks neurotransmitters. Causes IQ reduction and attention disorders in children.",
+        "severity": "critical"
+      },
+      {
+        "name": "Gold",
+        "amount": "In connectors (refined using cyanide)",
+        "effect": "Cyanide used in extraction causes rapid suffocation and death. Environmental contamination.",
+        "severity": "high"
+      },
+      {
+        "name": "Flame Retardants",
+        "amount": "Brominated compounds in board",
+        "effect": "Endocrine disruptors. Affect thyroid function and fetal development.",
+        "severity": "high"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "LCD Monitor/TV",
+    "category": "Display Devices",
+    "image": "🖥️",
+    "description": "Modern flat screens still contain mercury and other hazardous materials.",
+    "toxins": [
+      {
+        "name": "Mercury",
+        "amount": "In fluorescent lamps",
+        "effect": "Vapor damages lungs, brain, and kidneys. Bioaccumulates in fish and food chain.",
+        "severity": "critical"
+      },
+      {
+        "name": "Indium",
+        "amount": "In ITO coating",
+        "effect": "Causes indium lung disease. Respiratory failure and pulmonary fibrosis.",
+        "severity": "high"
+      },
+      {
+        "name": "Selenium",
+        "amount": "In photocopiers",
+        "effect": "Causes selenosis: hair loss, nail brittleness, and neurological damage.",
+        "severity": "medium"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Refrigerator/AC",
+    "category": "Appliances",
+    "image": "❄️",
+    "description": "Contains refrigerants that deplete ozone layer and contribute to global warming.",
+    "toxins": [
+      {
+        "name": "CFCs/HCFCs",
+        "amount": "In cooling system",
+        "effect": "Ozone depletion increases UV radiation exposure. Causes skin cancer and cataracts.",
+        "severity": "critical"
+      },
+      {
+        "name": "Polyurethane Foam",
+        "amount": "In insulation",
+        "effect": "Releases isocyanates causing asthma and respiratory sensitization.",
+        "severity": "medium"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Fluorescent Tube Lights",
+    "category": "Lighting Devices",
+    "image": "💡",
+    "description": "Contains mercury vapor which is highly toxic when released. Common in tube lights and CFL bulbs.",
+    "toxins": [
+      {
+        "name": "Mercury Vapor",
+        "amount": "5-20 mg per tube",
+        "effect": "Inhalation causes severe lung damage, kidney failure, and neurological disorders. Highly toxic.",
+        "severity": "critical"
+      },
+      {
+        "name": "Phosphor Coating",
+        "amount": "Inner glass coating",
+        "effect": "Contains rare earth elements and heavy metals toxic to lungs and skin.",
+        "severity": "high"
+      },
+      {
+        "name": "Lead Glass",
+        "amount": "In older tubes",
+        "effect": "Leaches lead into soil and water. Causes developmental issues in children.",
+        "severity": "high"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "name": "Microwave Oven",
+    "category": "Appliances",
+    "image": "🍽️",
+    "description": "Contains hazardous materials in magnetron, capacitors, and electronic components.",
+    "toxins": [
+      {
+        "name": "Beryllium Oxide",
+        "amount": "In magnetron tube",
+        "effect": "Extremely toxic when inhaled. Causes chronic beryllium disease and lung cancer.",
+        "severity": "critical"
+      },
+      {
+        "name": "PCBs",
+        "amount": "In older capacitors",
+        "effect": "Carcinogenic. Causes liver damage and reproductive issues. Persists in environment.",
+        "severity": "critical"
+      },
+      {
+        "name": "Lead & Cadmium",
+        "amount": "In circuit boards",
+        "effect": "Neurotoxic and carcinogenic. Damages kidneys and bones.",
+        "severity": "high"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "name": "Washing Machine",
+    "category": "Appliances",
+    "image": "🧺",
+    "description": "Electronic control boards and motors contain multiple hazardous substances.",
+    "toxins": [
+      {
+        "name": "Lead",
+        "amount": "In solder and electronics",
+        "effect": "Accumulates in body over time. Causes anemia, nerve damage, and kidney disease.",
+        "severity": "critical"
+      },
+      {
+        "name": "Copper",
+        "amount": "In motor windings",
+        "effect": "Toxic to aquatic life. Causes liver and kidney damage in humans.",
+        "severity": "medium"
+      },
+      {
+        "name": "Plasticizers",
+        "amount": "In plastic components",
+        "effect": "Endocrine disruptors. Affect reproductive system and fetal development.",
+        "severity": "high"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "name": "Desktop Computer Tower",
+    "category": "Computing Devices",
+    "image": "🖥️",
+    "description": "Power supplies and motherboards contain high levels of toxic heavy metals.",
+    "toxins": [
+      {
+        "name": "Lead",
+        "amount": "Up to 1 kg in CRT models",
+        "effect": "Damages brain and nervous system. Particularly harmful to children's development.",
+        "severity": "critical"
+      },
+      {
+        "name": "Hexavalent Chromium",
+        "amount": "In metal coatings",
+        "effect": "Highly carcinogenic. Causes lung cancer and severe skin ulcers.",
+        "severity": "critical"
+      },
+      {
+        "name": "PVC",
+        "amount": "In cables and casings",
+        "effect": "Releases dioxins when burned. Causes cancer and immune system damage.",
+        "severity": "high"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "name": "Solar Panels",
+    "category": "Energy Devices",
+    "image": "☀️",
+    "description": "Photovoltaic cells contain toxic heavy metals that leach when panels break down.",
+    "toxins": [
+      {
+        "name": "Cadmium Telluride",
+        "amount": "In thin-film panels",
+        "effect": "Carcinogenic. Causes lung damage and kidney failure. Highly toxic to environment.",
+        "severity": "critical"
+      },
+      {
+        "name": "Lead",
+        "amount": "In solder joints",
+        "effect": "Leaches into groundwater. Causes neurological damage and developmental delays.",
+        "severity": "critical"
+      },
+      {
+        "name": "Silicon Dust",
+        "amount": "From broken panels",
+        "effect": "Inhalation causes silicosis (lung scarring). Respiratory failure.",
+        "severity": "high"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "name": "Printers & Scanners",
+    "category": "Office Equipment",
+    "image": "🖨️",
+    "description": "Contain hazardous chemicals in toner, ink cartridges, and electronic components.",
+    "toxins": [
+      {
+        "name": "Toner Particles",
+        "amount": "In laser printers",
+        "effect": "Fine particles cause respiratory problems, asthma, and lung tissue damage.",
+        "severity": "high"
+      },
+      {
+        "name": "VOCs",
+        "amount": "During operation",
+        "effect": "Volatile organic compounds cause headaches, dizziness, and liver damage.",
+        "severity": "medium"
+      },
+      {
+        "name": "Heavy Metals",
+        "amount": "In circuit boards",
+        "effect": "Lead, mercury, and cadmium damage nervous system and organs.",
+        "severity": "critical"
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "name": "Power Transformers",
+    "category": "Electrical Equipment",
+    "image": "⚡",
+    "description": "Old transformers contain PCBs and other extremely hazardous materials.",
+    "toxins": [
+      {
+        "name": "PCBs (Polychlorinated Biphenyls)",
+        "amount": "In insulating oil",
+        "effect": "Highly carcinogenic. Causes liver cancer, skin diseases, and birth defects.",
+        "severity": "critical"
+      },
+      {
+        "name": "Asbestos",
+        "amount": "In insulation",
+        "effect": "Causes mesothelioma and asbestosis (lung scarring). Fatal cancer.",
+        "severity": "critical"
+      },
+      {
+        "name": "Mineral Oil",
+        "amount": "Coolant fluid",
+        "effect": "Contaminates water sources. Toxic to aquatic ecosystems.",
+        "severity": "high"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "name": "Medical E-Waste",
+    "category": "Healthcare Devices",
+    "image": "🏥",
+    "description": "Discarded medical equipment contains radioactive and biohazardous materials.",
+    "toxins": [
+      {
+        "name": "Radioactive Materials",
+        "amount": "In imaging equipment",
+        "effect": "Radiation exposure causes cancer, genetic mutations, and organ damage.",
+        "severity": "critical"
+      },
+      {
+        "name": "Biohazards",
+        "amount": "Contaminated devices",
+        "effect": "Blood-borne pathogens (HIV, Hepatitis). Infectious diseases.",
+        "severity": "critical"
+      },
+      {
+        "name": "Mercury",
+        "amount": "In thermometers and BP monitors",
+        "effect": "Neurotoxin causing Minamata disease. Kidney and brain damage.",
+        "severity": "critical"
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "name": "E-Cigarettes/Vapes",
+    "category": "Battery Devices",
+    "image": "💨",
+    "description": "Lithium batteries and nicotine cartridges pose dual toxicity risks.",
+    "toxins": [
+      {
+        "name": "Lithium-Ion Battery",
+        "amount": "In device",
+        "effect": "Causes fires and explosions. Releases toxic fumes when burned.",
+        "severity": "high"
+      },
+      {
+        "name": "Nicotine Residue",
+        "amount": "In cartridges",
+        "effect": "Highly toxic neurotoxin. Fatal if ingested. Harmful to aquatic life.",
+        "severity": "high"
+      },
+      {
+        "name": "Heavy Metals",
+        "amount": "Heating coils",
+        "effect": "Lead and nickel leach into environment. Carcinogenic.",
+        "severity": "medium"
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "name": "Electric Vehicles Batteries",
+    "category": "Transportation",
+    "image": "🚗",
+    "description": "Large-format lithium batteries contain massive amounts of toxic materials.",
+    "toxins": [
+      {
+        "name": "Lithium Salts",
+        "amount": "Hundreds of kg per vehicle",
+        "effect": "Highly reactive. Causes severe burns and respiratory damage. Water contamination.",
+        "severity": "critical"
+      },
+      {
+        "name": "Cobalt",
+        "amount": "20-30% of battery",
+        "effect": "Carcinogenic. Causes lung disease and heart problems. Environmental devastation.",
+        "severity": "critical"
+      },
+      {
+        "name": "Manganese",
+        "amount": "In cathodes",
+        "effect": "Neurotoxic. Causes Parkinson's-like symptoms. Brain damage.",
+        "severity": "high"
+      }
+    ]
+  }
+]
