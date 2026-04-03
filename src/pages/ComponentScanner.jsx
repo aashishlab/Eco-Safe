@@ -27,7 +27,6 @@ const ComponentScanner = () => {
   const { addToast } = useToast();
   
   const [uploadedImage, setUploadedImage] = useState(null);
-  const [deviceType, setDeviceType] = useState('smartphone');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
   const [selectedHazard, setSelectedHazard] = useState(null);
@@ -77,14 +76,10 @@ const ComponentScanner = () => {
       return;
     }
 
-    if (!deviceType) {
-      addToast('Please select a device type', 'error');
-      return;
-    }
-
     try {
       setIsAnalyzing(true);
-      const result = await analyzeDeviceImage(uploadedImage, deviceType);
+      // AI will detect device type automatically from image
+      const result = await analyzeDeviceImage(uploadedImage);
       
       if (result.success) {
         setAnalysisResult(result);
@@ -148,32 +143,8 @@ const ComponentScanner = () => {
             <Card>
               <div className="p-8">
                 <h2 className="text-2xl font-bold text-slate-900 mb-6">
-                  Step 1: Upload & Analyze
+                  Step 1: Upload Device Photo
                 </h2>
-
-                {/* Device Type Selection */}
-                <div className="mb-8">
-                  <label className="block text-sm font-semibold text-slate-700 mb-4">
-                    Select Device Type
-                  </label>
-                  <div className="grid grid-cols-2 gap-3">
-                    {deviceTypes.map((type) => (
-                      <motion.button
-                        key={type.id}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setDeviceType(type.id)}
-                        className={`p-3 rounded-lg font-medium transition-all ${
-                          deviceType === type.id
-                            ? 'bg-emerald-600 text-white shadow-lg'
-                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                        }`}
-                      >
-                        {type.label}
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
 
                 {/* Image Upload */}
                 <div className="mb-8">
@@ -223,7 +194,7 @@ const ComponentScanner = () => {
                   size="lg"
                   className="w-full"
                 >
-                  {isAnalyzing ? 'Analyzing Components...' : 'Analyze Device'}
+                  {isAnalyzing ? 'AI Analyzing Components...' : 'Analyze with AI'}
                 </Button>
               </div>
             </Card>
@@ -243,19 +214,15 @@ const ComponentScanner = () => {
                 <div className="space-y-4 text-sm text-slate-600">
                   <div>
                     <p className="font-semibold text-slate-700 mb-1">1. Upload Image</p>
-                    <p>Take or upload a clear photo of your device</p>
+                    <p>Take or upload a clear photo of your electronic device</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-700 mb-1">2. Select Device Type</p>
-                    <p>Help AI identify components accurately</p>
+                    <p className="font-semibold text-slate-700 mb-1">2. AI Analysis</p>
+                    <p>Our AI automatically detects device type and components</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-700 mb-1">3. AI Analysis</p>
-                    <p>Our AI detects components and hazards</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-slate-700 mb-1">4. Get Recommendations</p>
-                    <p>Receive safe disposal guidance</p>
+                    <p className="font-semibold text-slate-700 mb-1">3. Get Results</p>
+                    <p>Receive detailed hazard assessment and safety recommendations</p>
                   </div>
                 </div>
 
@@ -310,6 +277,154 @@ const ComponentScanner = () => {
                     </div>
                   </div>
                 </div>
+              </motion.div>
+
+              {/* AI Overview Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+              >
+                <Card>
+                  <div className="p-8">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="bg-gradient-to-r from-purple-100 to-blue-100 p-3 rounded-xl">
+                        <div className="text-2xl">🤖</div>
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-900">AI Analysis Overview</h3>
+                        <p className="text-sm text-slate-500">Intelligent assessment powered by Gemini AI</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-purple-50 via-blue-50 to-emerald-50 rounded-2xl p-6 border border-purple-100">
+                      <div className="space-y-4">
+                        {/* Quick Summary */}
+                        <div className="flex items-start gap-3">
+                          <div className="text-2xl flex-shrink-0 mt-0.5">📱</div>
+                          <div className="flex-1">
+                            <p className="text-sm font-semibold text-slate-700 mb-1">DEVICE ANALYZED</p>
+                            <p className="text-slate-900 font-medium capitalize">
+                              {analysisResult.deviceType} - {analysisResult.detectedComponents.length} components identified
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Key Findings */}
+                        <div className="flex items-start gap-3">
+                          <div className="text-2xl flex-shrink-0 mt-0.5">🔍</div>
+                          <div className="flex-1">
+                            <p className="text-sm font-semibold text-slate-700 mb-1">KEY FINDINGS</p>
+                            <p className="text-slate-900 leading-relaxed">
+                              {analysisResult.hazardAnalysis.length > 0 ? (
+                                <>
+                                  Detected {analysisResult.hazardAnalysis.reduce((sum, h) => sum + (h.toxins?.length || 0), 0)} hazardous materials 
+                                  across {analysisResult.hazardAnalysis.length} component{analysisResult.hazardAnalysis.length !== 1 ? 's' : ''}. 
+                                  Primary concerns include{' '}
+                                  {analysisResult.hazardAnalysis.slice(0, 2).map((h, idx) => (
+                                    <span key={idx}>
+                                      <strong className="text-slate-900">{h.component}</strong>
+                                      {idx === 0 && analysisResult.hazardAnalysis.length > 2 ? ', ' : ''}
+                                      {idx === 0 && analysisResult.hazardAnalysis.length > 2 ? '' : ''}
+                                    </span>
+                                  ))}.
+                                </>
+                              ) : (
+                                'No significant hazards detected in this device.'
+                              )}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Health Impact */}
+                        <div className="flex items-start gap-3">
+                          <div className="text-2xl flex-shrink-0 mt-0.5">⚕️</div>
+                          <div className="flex-1">
+                            <p className="text-sm font-semibold text-slate-700 mb-1">HEALTH IMPACT ASSESSMENT</p>
+                            <p className="text-slate-900 leading-relaxed">
+                              {analysisResult.riskLevel === 'CRITICAL' && (
+                                <>Immediate health risk. Avoid direct contact. Seek professional handling immediately.</>
+                              )}
+                              {analysisResult.riskLevel === 'HIGH' && (
+                                <>Significant health concerns with prolonged exposure. Use protective equipment when handling.</>
+                              )}
+                              {analysisResult.riskLevel === 'MEDIUM' && (
+                                <>Moderate health risks present. Basic precautions recommended during handling and disposal.</>
+                              )}
+                              {analysisResult.riskLevel === 'LOW' && (
+                                <>Minimal immediate health risks. Standard e-waste recycling procedures apply.</>
+                              )}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Environmental Note */}
+                        <div className="flex items-start gap-3">
+                          <div className="text-2xl flex-shrink-0 mt-0.5">🌍</div>
+                          <div className="flex-1">
+                            <p className="text-sm font-semibold text-slate-700 mb-1">ENVIRONMENTAL ADVISORY</p>
+                            <p className="text-slate-900 leading-relaxed">
+                              {analysisResult.riskLevel === 'CRITICAL' || analysisResult.riskLevel === 'HIGH' ? (
+                                <>High environmental impact if improperly disposed. Must be processed at certified facility to prevent soil and water contamination.</>
+                              ) : (
+                                <>Moderate environmental considerations. Proper recycling prevents release of toxic substances into ecosystems.</>
+                              )}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Action Priority */}
+                        <div className="flex items-start gap-3">
+                          <div className="text-2xl flex-shrink-0 mt-0.5">🎯</div>
+                          <div className="flex-1">
+                            <p className="text-sm font-semibold text-slate-700 mb-1">RECOMMENDED ACTION</p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <span className={`inline-block px-4 py-2 rounded-lg font-bold text-white ${
+                                analysisResult.riskLevel === 'CRITICAL' ? 'bg-red-600' :
+                                analysisResult.riskLevel === 'HIGH' ? 'bg-orange-600' :
+                                analysisResult.riskLevel === 'MEDIUM' ? 'bg-amber-600' : 'bg-emerald-600'
+                              }`}>
+                                {analysisResult.riskLevel === 'CRITICAL' && '🚨 URGENT: Professional Handling Required'}
+                                {analysisResult.riskLevel === 'HIGH' && '⚠️ HIGH PRIORITY: Certified Recycling Needed'}
+                                {analysisResult.riskLevel === 'MEDIUM' && '📋 MODERATE: Follow Safety Guidelines'}
+                                {analysisResult.riskLevel === 'LOW' && '✅ STANDARD: Regular E-Waste Disposal'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* AI Confidence Indicator */}
+                    <div className="mt-6 pt-6 border-t border-slate-200">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="text-sm font-semibold text-slate-600">AI Confidence:</div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-32 bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                              <div 
+                                className={`h-2.5 rounded-full ${
+                                  analysisResult.hazardAnalysis.reduce((sum, h) => sum + h.confidence, 0) / Math.max(analysisResult.hazardAnalysis.length, 1) >= 80
+                                    ? 'bg-emerald-500'
+                                    : analysisResult.hazardAnalysis.reduce((sum, h) => sum + h.confidence, 0) / Math.max(analysisResult.hazardAnalysis.length, 1) >= 60
+                                    ? 'bg-amber-500'
+                                    : 'bg-red-500'
+                                }`}
+                                style={{ width: `${analysisResult.hazardAnalysis.reduce((sum, h) => sum + h.confidence, 0) / Math.max(analysisResult.hazardAnalysis.length, 1)}%` }}
+                              />
+                            </div>
+                            <span className="text-sm font-bold text-slate-700">
+                              {Math.round(analysisResult.hazardAnalysis.reduce((sum, h) => sum + h.confidence, 0) / Math.max(analysisResult.hazardAnalysis.length, 1))}%
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-xs text-slate-500">
+                          Powered by Google Gemini AI
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
               </motion.div>
 
               {/* Summary Stats */}
