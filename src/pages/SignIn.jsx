@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
-import { LogIn, Mail, Lock } from 'lucide-react';
+import { LogIn, Mail, Lock, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { FormInput } from '../components/FormInput';
@@ -24,6 +24,17 @@ const SignIn = () => {
   
   const [isLoading, setIsLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [role, setRole] = useState(null);
+
+  useEffect(() => {
+    // Requirements: Role must be selected first
+    const savedRole = sessionStorage.getItem('ecosafe_temp_role');
+    if (!savedRole) {
+      navigate('/role-selection');
+    } else {
+      setRole(savedRole);
+    }
+  }, [navigate]);
 
   const from = location.state?.from?.pathname || '/';
 
@@ -37,7 +48,7 @@ const SignIn = () => {
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
-    const result = await googleSignIn();
+    const result = await googleSignIn(role);
     if (result.success) {
       addToast('Signed in with Google successfully!', 'success');
       navigate(from, { replace: true });
@@ -62,6 +73,8 @@ const SignIn = () => {
     setIsLoading(false);
   };
 
+  if (!role) return null;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 flex items-center justify-center p-4">
       <motion.div
@@ -70,10 +83,18 @@ const SignIn = () => {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
+        <button 
+          onClick={() => navigate('/role-selection')}
+          className="flex items-center gap-2 text-slate-600 hover:text-emerald-600 font-medium mb-6 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Change Account Type
+        </button>
+
         {/* Card */}
-        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100">
           {/* Header */}
-          <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-8 text-center">
+          <div className={`p-8 text-center ${role === 'ngo' ? 'bg-gradient-to-r from-teal-600 to-cyan-600' : 'bg-gradient-to-r from-emerald-600 to-teal-600'}`}>
             <motion.div
               initial={{ scale: 0.8, rotate: -10 }}
               animate={{ scale: 1, rotate: 0 }}
@@ -82,8 +103,10 @@ const SignIn = () => {
             >
               <LogIn className="h-8 w-8 text-white" />
             </motion.div>
-            <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
-            <p className="text-emerald-100">Sign in to continue protecting communities</p>
+            <h1 className="text-3xl font-bold text-white mb-2">
+              {role === 'ngo' ? 'NGO Login' : 'User Login'}
+            </h1>
+            <p className="text-emerald-50 opacity-90">Sign in to your EcoSafe account</p>
           </div>
 
           {/* Form */}
@@ -96,7 +119,7 @@ const SignIn = () => {
                 loading={googleLoading}
                 disabled={isLoading}
                 variant="secondary"
-                className="!flex gap-3 w-full"
+                className="!flex gap-3 w-full border-2 hover:bg-slate-50 transition-all"
               >
                 <FcGoogle className="h-5 w-5" />
                 Sign in with Google
@@ -104,10 +127,10 @@ const SignIn = () => {
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-300"></div>
+                  <div className="w-full border-t border-slate-200"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-slate-500">Or continue with email</span>
+                  <span className="px-3 bg-white text-slate-400 font-medium">Or continue with email</span>
                 </div>
               </div>
 
@@ -133,12 +156,12 @@ const SignIn = () => {
 
               {/* Remember Me & Forgot Password */}
               <div className="flex items-center justify-between">
-                <label className="flex items-center space-x-2 cursor-pointer">
+                <label className="flex items-center space-x-2 cursor-pointer group">
                   <input
                     type="checkbox"
-                    className="h-4 w-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500 cursor-pointer"
+                    className="h-4 w-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500 cursor-pointer transition-all"
                   />
-                  <span className="text-sm font-medium text-slate-600">Remember me</span>
+                  <span className="text-sm font-medium text-slate-600 group-hover:text-slate-900">Remember me</span>
                 </label>
                 <Link
                   to="/forgot-password"
@@ -154,33 +177,19 @@ const SignIn = () => {
                 loading={isLoading}
                 disabled={googleLoading}
                 size="lg"
-                className="w-full"
+                className="w-full shadow-lg shadow-emerald-200"
               >
                 Sign In
               </Button>
             </form>
 
-            {/* Demo Credentials */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="mt-6 bg-blue-50 border-2 border-blue-200 rounded-lg p-4"
-            >
-              <p className="text-sm font-semibold text-blue-800 mb-2">Demo Credentials:</p>
-              <div className="space-y-1 text-xs text-blue-700 font-mono">
-                <p><span className="font-bold">Email:</span> demo@ecosafe.com</p>
-                <p><span className="font-bold">Password:</span> demo123</p>
-              </div>
-            </motion.div>
-
             {/* Sign Up Link */}
-            <div className="mt-6 text-center">
+            <div className="mt-8 text-center pt-6 border-t border-slate-50">
               <p className="text-slate-600">
                 Don't have an account?{' '}
                 <Link
                   to="/signup"
-                  className="text-emerald-600 hover:text-emerald-700 font-semibold transition-colors"
+                  className="text-emerald-600 hover:text-emerald-700 font-bold transition-colors"
                 >
                   Create Account
                 </Link>
@@ -194,16 +203,12 @@ const SignIn = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="text-center text-slate-600 text-sm mt-6"
+          className="text-center text-slate-400 text-xs mt-8"
         >
           By signing in, you agree to our{' '}
-          <Link to="/terms" className="text-emerald-600 hover:underline font-medium">
-            Terms of Service
-          </Link>{' '}
-          and{' '}
-          <Link to="/privacy" className="text-emerald-600 hover:underline font-medium">
-            Privacy Policy
-          </Link>
+          <Link to="/terms" className="hover:text-emerald-600 transition-colors">Terms of Service</Link>
+          {' '}and{' '}
+          <Link to="/privacy" className="hover:text-emerald-600 transition-colors">Privacy Policy</Link>
         </motion.p>
       </motion.div>
     </div>

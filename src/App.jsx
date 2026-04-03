@@ -17,6 +17,7 @@ import Profile from './pages/Profile';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Accessibility from './pages/Accessibility';
+import RoleSelection from './pages/RoleSelection';
 import './App.css';
 
 // Error Boundary Component
@@ -80,6 +81,7 @@ function AppContent() {
             {/* Public Routes */}
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/role-selection" element={<RoleSelection />} />
             
             {/* Public Pages WITH Layout */}
             <Route path="/" element={

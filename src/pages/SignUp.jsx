@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
-import { UserPlus, Mail, Lock, User, CheckCircle } from 'lucide-react';
+import { UserPlus, Mail, Lock, User, CheckCircle, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { FormInput, FormCheckbox } from '../components/FormInput';
+import { FormInput } from '../components/FormInput';
 import { Button } from '../components/Button';
 import { FcGoogle } from 'react-icons/fc';
 
@@ -35,6 +35,16 @@ const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [role, setRole] = useState(null);
+
+  useEffect(() => {
+    const savedRole = sessionStorage.getItem('ecosafe_temp_role');
+    if (!savedRole) {
+      navigate('/role-selection');
+    } else {
+      setRole(savedRole);
+    }
+  }, [navigate]);
 
   const {
     register,
@@ -49,12 +59,12 @@ const SignUp = () => {
 
   const handleGoogleSignUp = async () => {
     setGoogleLoading(true);
-    const result = await googleSignIn();
+    const result = await googleSignIn(role);
     if (result.success) {
       addToast('Account created with Google successfully!', 'success');
       setSuccess(true);
       setTimeout(() => {
-        navigate('/', { state: { message: 'Signed up with Google!' } });
+        navigate('/');
       }, 2000);
     } else {
       addToast(result.error || 'Failed to sign up with Google', 'error');
@@ -65,17 +75,13 @@ const SignUp = () => {
   const onSubmit = async (data) => {
     setIsLoading(true);
 
-    const result = await signUp({
-      name: data.name,
-      email: data.email,
-      password: data.password,
-    });
+    const result = await signUp(data.email, data.password, data.name, role);
 
     if (result.success) {
-      addToast('Account created successfully! Redirecting to sign in...', 'success');
+      addToast('Account created successfully!', 'success');
       setSuccess(true);
       setTimeout(() => {
-        navigate('/signin', { state: { message: 'Account created successfully! Please sign in.' } });
+        navigate('/signin');
       }, 2000);
     } else {
       addToast(result.error || 'Failed to create account', 'error');
@@ -83,6 +89,8 @@ const SignUp = () => {
 
     setIsLoading(false);
   };
+
+  if (!role) return null;
 
   if (success) {
     return (
@@ -105,11 +113,11 @@ const SignUp = () => {
               Account Created Successfully!
             </h2>
             <p className="text-slate-600 mb-6">
-              Redirecting you to sign in...
+              Welcome to EcoSafe! Your {role.toUpperCase()} account is ready.
             </p>
             <div className="bg-emerald-50 border-2 border-emerald-200 rounded-lg p-4">
               <p className="text-sm text-emerald-800 font-medium">
-                Welcome to EcoSafe! Let's work together to protect communities from e-waste hazards.
+                Redirecting you to the sign in page...
               </p>
             </div>
           </div>
@@ -126,10 +134,18 @@ const SignUp = () => {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
+        <button 
+          onClick={() => navigate('/role-selection')}
+          className="flex items-center gap-2 text-slate-600 hover:text-emerald-600 font-medium mb-6 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Change Account Type
+        </button>
+
         {/* Card */}
-        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100">
           {/* Header */}
-          <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-8 text-center">
+          <div className={`p-8 text-center ${role === 'ngo' ? 'bg-gradient-to-r from-teal-600 to-cyan-600' : 'bg-gradient-to-r from-emerald-600 to-teal-600'}`}>
             <motion.div
               initial={{ scale: 0.8, rotate: -10 }}
               animate={{ scale: 1, rotate: 0 }}
@@ -138,8 +154,10 @@ const SignUp = () => {
             >
               <UserPlus className="h-8 w-8 text-white" />
             </motion.div>
-            <h1 className="text-3xl font-bold text-white mb-2">Create Your Account</h1>
-            <p className="text-emerald-100">Join the movement to protect communities</p>
+            <h1 className="text-3xl font-bold text-white mb-2">
+              {role === 'ngo' ? 'Register as NGO' : 'Register as User'}
+            </h1>
+            <p className="text-emerald-50 opacity-90">Join the movement to protect communities</p>
           </div>
 
           {/* Form */}
@@ -152,7 +170,7 @@ const SignUp = () => {
                 loading={googleLoading}
                 disabled={isLoading}
                 variant="secondary"
-                className="!flex gap-3 w-full"
+                className="!flex gap-3 w-full border-2 hover:bg-slate-50 transition-all"
               >
                 <FcGoogle className="h-5 w-5" />
                 Sign up with Google
@@ -160,10 +178,10 @@ const SignUp = () => {
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-300"></div>
+                  <div className="w-full border-t border-slate-200"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-slate-500">Or continue with email</span>
+                  <span className="px-3 bg-white text-slate-400 font-medium">Or continue with email</span>
                 </div>
               </div>
 
@@ -211,7 +229,7 @@ const SignUp = () => {
 
               {/* Terms & Conditions */}
               <div className="pt-2">
-                <label className="flex items-start space-x-3 cursor-pointer">
+                <label className="flex items-start space-x-3 cursor-pointer group">
                   <input
                     {...register('acceptTerms')}
                     type="checkbox"
@@ -241,19 +259,19 @@ const SignUp = () => {
                 loading={isLoading}
                 disabled={googleLoading}
                 size="lg"
-                className="w-full mt-6"
+                className="w-full mt-6 shadow-lg shadow-emerald-200"
               >
                 Create Account
               </Button>
             </form>
 
             {/* Sign In Link */}
-            <div className="mt-6 text-center">
+            <div className="mt-8 text-center pt-6 border-t border-slate-50">
               <p className="text-slate-600">
                 Already have an account?{' '}
                 <Link
                   to="/signin"
-                  className="text-emerald-600 hover:text-emerald-700 font-semibold transition-colors"
+                  className="text-emerald-600 hover:text-emerald-700 font-bold transition-colors"
                 >
                   Sign In
                 </Link>

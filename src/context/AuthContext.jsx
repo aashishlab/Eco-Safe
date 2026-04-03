@@ -1,7 +1,14 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { authAPI } from '../utils/auth';
-import { auth, provider } from '../utils/firebase';
-import { signInWithPopup } from 'firebase/auth';
+import { auth, db, provider } from '../utils/firebase';
+import { 
+  signInWithPopup, 
+  onAuthStateChanged, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut as firebaseSignOut,
+  updateProfile as firebaseUpdateProfile
+} from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const AuthContext = createContext(null);
 
@@ -16,48 +23,63 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(() => {
-    try {
-      return localStorage.getItem('ecosafe_token');
-    } catch (error) {
-      console.error('Error accessing localStorage:', error);
-      return null;
-    }
-  });
 
   useEffect(() => {
-    // Check if user is already logged in
-    const initAuth = async () => {
-      if (token) {
+    // Listen for auth state changes (Firebase handles persistence itself)
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        // Fetch user role from Firestore
         try {
-          const currentUser = authAPI.getCurrentUser(token);
-          if (currentUser) {
-            setUser(currentUser);
+          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            setUser({
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              name: firebaseUser.displayName || userData.name,
+              role: userData.role,
+              ...userData
+            });
           } else {
-            // Token invalid or expired
-            localStorage.removeItem('ecosafe_token');
-            setToken(null);
+            // Fallback for cases where Firestore doc might not exist yet (e.g. initial Google login)
+            setUser({
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              name: firebaseUser.displayName,
+              role: 'user', // Default role
+            });
           }
         } catch (error) {
-          console.error('Auth initialization error:', error);
-          try {
-            localStorage.removeItem('ecosafe_token');
-          } catch (e) {
-            console.error('Error clearing token:', e);
-          }
-          setToken(null);
+          console.error("Error fetching user data:", error);
+          setUser(null);
         }
+      } else {
+        setUser(null);
       }
       setLoading(false);
-    };
+    });
 
-    initAuth();
+    return () => unsubscribe();
   }, []);
 
-  const signUp = async (userData) => {
+  const signUp = async (email, password, name, role) => {
     try {
-      const result = await authAPI.signUp(userData);
-      return { success: true, data: result };
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const firebaseUser = userCredential.user;
+
+      // Update profile with name
+      await firebaseUpdateProfile(firebaseUser, { displayName: name });
+
+      // Store additional data in Firestore
+      await setDoc(doc(db, 'users', firebaseUser.uid), {
+        uid: firebaseUser.uid,
+        email: email,
+        name: name,
+        role: role,
+        createdAt: new Date().toISOString(),
+      });
+
+      return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
     }
@@ -65,29 +87,57 @@ export const AuthProvider = ({ children }) => {
 
   const signIn = async (email, password) => {
     try {
-      const result = await authAPI.signIn(email, password);
-      setToken(result.token);
-      setUser(result.user);
-      localStorage.setItem('ecosafe_token', result.token);
-      return { success: true, data: result };
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      // No need to manually set state here, onAuthStateChanged will handle it
+      return { success: true, data: userCredential.user };
     } catch (error) {
       return { success: false, error: error.message };
     }
   };
 
-  const signOut = () => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem('ecosafe_token');
+  const signOut = async () => {
+    try {
+      await firebaseSignOut(auth);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
   };
 
   const updateProfile = async (updates) => {
     if (!user) return { success: false, error: 'Not authenticated' };
     
     try {
-      const updatedUser = await authAPI.updateProfile(user.id, updates);
-      setUser(updatedUser);
-      return { success: true, data: updatedUser };
+      // Logic for updating profile in Firestore could go here
+      // This is a simplified version
+      await setDoc(doc(db, 'users', user.uid), updates, { merge: true });
+      setUser(prev => ({ ...prev, ...updates }));
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  };
+
+  const googleSignIn = async (role = 'user') => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const firebaseUser = result.user;
+      
+      // Check if user document exists in Firestore
+      const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+      
+      if (!userDoc.exists()) {
+        // If it's a new user login via Google, save their role
+        await setDoc(doc(db, 'users', firebaseUser.uid), {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          name: firebaseUser.displayName,
+          role: role,
+          createdAt: new Date().toISOString(),
+        });
+      }
+      
+      return { success: true, data: firebaseUser };
     } catch (error) {
       return { success: false, error: error.message };
     }
@@ -95,33 +145,14 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
-    token,
     loading,
     signUp,
     signIn,
     signOut,
     updateProfile,
+    googleSignIn,
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin'
-    ,
-    googleSignIn: async () => {
-      try {
-        const result = await signInWithPopup(auth, provider);
-        const googleUser = result.user;
-        // You may want to send this info to your backend or store in localStorage
-        setUser({
-          id: googleUser.uid,
-          name: googleUser.displayName,
-          email: googleUser.email,
-          role: 'user',
-        });
-        setToken(googleUser.accessToken);
-        localStorage.setItem('ecosafe_token', googleUser.accessToken);
-        return { success: true, data: googleUser };
-      } catch (error) {
-        return { success: false, error: error.message };
-      }
-    }
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

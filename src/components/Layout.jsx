@@ -57,7 +57,9 @@ const Layout = ({ children }) => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-1">
-              {navLinks.map((link, index) => {
+              {navLinks
+                .filter(link => !(user?.role === 'ngo' && link.path === '/report'))
+                .map((link, index) => {
                 const IconComponent = link.icon;
                 return (
                   <motion.div
@@ -117,7 +119,9 @@ const Layout = ({ children }) => {
             className="md:hidden bg-white border-t border-slate-100 py-4"
           >
             <div className="px-4 space-y-2">
-              {navLinks.map((link, index) => {
+              {navLinks
+                .filter(link => !(user?.role === 'ngo' && link.path === '/report'))
+                .map((link, index) => {
                 const IconComponent = link.icon;
                 return (
                   <motion.div

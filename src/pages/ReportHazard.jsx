@@ -11,8 +11,14 @@ import {
   FileText, 
   Flag,
   X,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Building2,
+  Loader2
 } from 'lucide-react';
+import { db } from '../utils/firebase';
+import { collection, addDoc, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import Layout from '../components/Layout';
 
 // Zod validation schema
@@ -23,6 +29,7 @@ const reportSchema = z.object({
   activityType: z.string().min(1, 'Please select an activity type'),
   severity: z.enum(['low', 'medium', 'critical']),
   location: z.string().min(5, 'Please provide a detailed location'),
+  assignedNgoId: z.string().min(1, 'Please select an NGO to handle this report'),
   image: z.any().optional(),
 });
 
@@ -30,6 +37,10 @@ const ReportHazard = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [uploadedImage, setUploadedImage] = useState(null);
+  const [ngos, setNgos] = useState([]);
+  const [isLoadingNgos, setIsLoadingNgos] = useState(true);
+  const { user } = useAuth();
+  const { addToast } = useToast();
 
   const {
     register,
@@ -41,6 +52,27 @@ const ReportHazard = () => {
     resolver: zodResolver(reportSchema),
     mode: 'onChange',
   });
+
+  // Fetch NGOs from Firestore
+  React.useEffect(() => {
+    const fetchNgos = async () => {
+      try {
+        const q = query(collection(db, 'users'), where('role', '==', 'ngo'));
+        const querySnapshot = await getDocs(q);
+        const ngoList = querySnapshot.docs.map(doc => ({
+          uid: doc.id,
+          ...doc.data()
+        }));
+        setNgos(ngoList);
+        setIsLoadingNgos(false);
+      } catch (error) {
+        console.error("Error fetching NGOs:", error);
+        addToast("Failed to load NGOs", "error");
+        setIsLoadingNgos(false);
+      }
+    };
+    fetchNgos();
+  }, [addToast]);
 
   const activityTypes = [
     'Cable burning',
@@ -75,10 +107,30 @@ const ReportHazard = () => {
   };
 
   const onSubmit = async (data) => {
-    // Simulate API call
-    console.log('Submitting report:', data);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsSubmitted(true);
+    if (!user) {
+      addToast("You must be logged in to report", "error");
+      return;
+    }
+
+    setIsSubmitted(true); // Show loading state or similar, but let's use the layout
+    const reportData = {
+      ...data,
+      userId: user.uid,
+      userName: user.name || user.email,
+      status: 'pending',
+      createdAt: serverTimestamp(),
+    };
+
+    try {
+      console.log('Submitting report to Firestore:', reportData);
+      await addDoc(collection(db, 'reports'), reportData);
+      setIsSubmitted(true);
+      addToast("Report submitted successfully!", "success");
+    } catch (error) {
+      console.error("Error submitting report:", error);
+      addToast("Failed to submit report. Please try again.", "error");
+      setIsSubmitted(false);
+    }
   };
 
   const nextStep = () => setCurrentStep(prev => prev + 1);
@@ -130,6 +182,34 @@ const ReportHazard = () => {
               </div>
               {errors.description && (
                 <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Select Assigned NGO *
+              </label>
+              <div className="relative">
+                <Building2 className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
+                <select
+                  {...register('assignedNgoId')}
+                  className="w-full pl-10 pr-4 py-3 border-2 border-slate-200 rounded-lg focus:border-emerald-500 focus:outline-none transition-colors appearance-none"
+                  disabled={isLoadingNgos}
+                >
+                  <option value="">Choose an NGO...</option>
+                  {ngos.map((ngo) => (
+                    <option key={ngo.uid} value={ngo.uid}>
+                      {ngo.name || ngo.email}
+                    </option>
+                  ))}
+                </select>
+                {isLoadingNgos && (
+                  <Loader2 className="absolute right-3 top-3 h-5 w-5 text-slate-400 animate-spin" />
+                )}
+              </div>
+              <p className="mt-1 text-xs text-slate-500">The selected NGO will investigate this report</p>
+              {errors.assignedNgoId && (
+                <p className="mt-1 text-sm text-red-600">{errors.assignedNgoId.message}</p>
               )}
             </div>
           </motion.div>

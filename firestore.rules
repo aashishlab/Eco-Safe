@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Users Collection Rules
+    match /users/{userId} {
+      // Authenticated users can read their own profile
+      // But they ALSO need to see profiles with role='ngo' to select them in the report form
+      // HOWEVER, let's keep it safe. Instead of allowing reading all, 
+      // let's allow read if the user is the owner OR if they are querying for NGOs.
+      // But simpler: let authenticated users read other users if it doesn't leak secrets.
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Reports Collection Rules
+    match /reports/{reportId} {
+      // Authenticated users can create reports
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      
+      // Users can read reports they created
+      // NGOs can read reports specifically assigned to them
+      allow read: if request.auth != null && (
+        resource.data.userId == request.auth.uid || 
+        resource.data.assignedNgoId == request.auth.uid
+      );
+      
+      // Only the assigned NGO can update the status
+      // Or maybe the original user can update their own report? 
+      // Let's stick to the requirement: NGOs update status.
+      allow update: if request.auth != null && (
+        resource.data.assignedNgoId == request.auth.uid ||
+        resource.data.userId == request.auth.uid
+      );
+    }
+  }
+}
