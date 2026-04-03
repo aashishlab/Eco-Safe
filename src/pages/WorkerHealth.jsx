@@ -13,7 +13,6 @@ import {
   Heart,
   Info
 } from 'lucide-react';
-import Layout from '../components/Layout';
 
 const WorkerHealth = () => {
   const navigate = useNavigate();
@@ -82,7 +81,7 @@ const WorkerHealth = () => {
   ];
 
   return (
-    <Layout>
+    <>
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -315,7 +314,7 @@ const WorkerHealth = () => {
           </motion.div>
         </div>
       </section>
-    </Layout>
+    </>
   );
 };
 
