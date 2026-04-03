@@ -27,7 +27,6 @@ import { useAuth } from '../context/AuthContext';
 import { db } from '../utils/firebase';
 import { collection, query, where, onSnapshot, updateDoc, doc, orderBy } from 'firebase/firestore';
 import { useToast } from '../context/ToastContext';
-import Layout from '../components/Layout';
 
 const Home = () => {
   const { user } = useAuth();
@@ -172,8 +171,7 @@ const Home = () => {
   };
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50">
         {/* Hero Section */}
         <motion.section 
           initial={{ opacity: 0 }}
@@ -491,7 +489,6 @@ const Home = () => {
           </div>
         </motion.section>
       </div>
-    </Layout>
   );
 };
 

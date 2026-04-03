@@ -13,7 +13,6 @@ import {
   Shield,
   CheckCircle
 } from 'lucide-react';
-import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 
 const Profile = () => {
@@ -54,7 +53,7 @@ const Profile = () => {
   };
 
   return (
-    <Layout>
+    <>
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
@@ -315,7 +314,7 @@ const Profile = () => {
           </motion.div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

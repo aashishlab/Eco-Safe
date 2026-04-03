@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { MapPin, Phone, Clock, DollarSign, Gift, Filter, Navigation, Search, ExternalLink, ArrowRight } from 'lucide-react';
-import Layout from '../components/Layout';
 import recyclingCenters from '../data/recyclingCenters.json';
 
 const RecyclerMap = () => {
@@ -61,7 +60,7 @@ const RecyclerMap = () => {
   const referenceLon = 78.7156;
 
   return (
-    <Layout>
+    <>
       <div className="flex flex-col lg:flex-row h-screen overflow-hidden">
         {/* Sidebar */}
         <div className="w-full lg:w-96 bg-white border-r border-slate-200 overflow-y-auto z-10">
@@ -327,7 +326,7 @@ const RecyclerMap = () => {
           )}
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

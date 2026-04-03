@@ -27,7 +27,7 @@ const Layout = ({ children }) => {
   const navLinks = [
     { name: 'Educate', path: '/', icon: FileText },
     { name: 'Scanner', path: '/scanner', icon: Camera },
-    { name: 'Database', path: '/database', icon: Database },
+    { name: 'Explore', path: '/database', icon: Database },
     { name: 'Map', path: '/map', icon: MapPin },
     { name: 'Report', path: '/report', icon: Megaphone },
     { name: 'Health Hub', path: '/health', icon: HeartPulse },

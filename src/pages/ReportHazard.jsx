@@ -19,7 +19,6 @@ import { db } from '../utils/firebase';
 import { collection, addDoc, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import Layout from '../components/Layout';
 
 // Zod validation schema
 const reportSchema = z.object({
@@ -342,7 +341,7 @@ const ReportHazard = () => {
 
   if (isSubmitted) {
     return (
-      <Layout>
+      <>
         <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 flex items-center justify-center p-4">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -375,12 +374,12 @@ const ReportHazard = () => {
             </button>
           </motion.div>
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 py-12">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
@@ -475,7 +474,7 @@ const ReportHazard = () => {
           </form>
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 
